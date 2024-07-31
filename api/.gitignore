@@ -1,0 +1,4 @@
+# ignorar las carpetas creadas por el sistema
+CsvFiles/
+creater/
+uploads/

@@ -164,9 +164,9 @@ async function insertDataDB(head, rows) {
         try {
 
             // SQL Server
-            const batchSize = 100000;
-            const pool = await sql.connect(connectionObj.config);
-            const transaction = new sql.Transaction(pool);
+            const batchSize = 500000;
+           // const pool = await sql.connect(connectionObj.config);
+            const transaction = new sql.Transaction();
 
             const chunkArray = (array, size) =>
                 Array.from({ length: Math.ceil(array.length / size) }, (v, i) =>
@@ -174,12 +174,14 @@ async function insertDataDB(head, rows) {
                 );
 
             const rowChunks = chunkArray(rows, batchSize);
-            const table = new sql.Table(tableName);
-            table.create = false;
+            
             let promises = [];
             for (const chunk of rowChunks) {
                 await transaction.begin();
                 
+                const table = new sql.Table(tableName);
+                table.create = false;        
+
                 columns.forEach(column => {
                     table.columns.add(column, sql.VarChar(sql.MAX), { nullable: true });
                 });
