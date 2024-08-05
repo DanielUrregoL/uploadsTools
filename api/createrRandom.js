@@ -4,6 +4,7 @@ const mysql = require('mysql2/promise');
 const sql = require('mssql');
 const { randomInt } = require('crypto');
 const { getConfig } = require('./conection');
+const { v4: uuidv4 } = require('uuid');
 
 
 
@@ -57,10 +58,11 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
                         row.push(formattedDate);
                     }
                     else if (headers[j].value === 'guid') {
-                        row.push('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                      /*  row.push('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                             let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                             return v.toString(16);
-                        }));
+                        }));*/
+                        row.push(uuidv4()); 
                     }
                     else if (headers[j].type === 'number') {
                         // Check if the range includes decimal values
@@ -105,7 +107,7 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
             await createCsv(head, rows);
             rows = [];
         }
-        rows = [];
+        
 
 
         // si hay un error, mostrarlo en la consola y rechazar la promesa
@@ -128,7 +130,7 @@ async function insertDataDB(head, rows) {
     const columns = head.split(',');
     const tableName = connectionObj.table;
 
-    if (connectionObj.config.server == undefined) {
+    if (!connectionObj.config.server) {
         // Insertar data en MySQL
         try {
             connection = await mysql.createConnection(connectionObj.config);
@@ -174,8 +176,8 @@ async function insertDataDB(head, rows) {
                 );
 
             const rowChunks = chunkArray(rows, batchSize);
-            
             let promises = [];
+
             for (const chunk of rowChunks) {
                 await transaction.begin();
                 
@@ -198,10 +200,10 @@ async function insertDataDB(head, rows) {
                         await transaction.commit();
                     })()
                 );
-
-                console.log('Data inserted successfully');
+              
                 await Promise.all(promises);
                 promises = [];
+                console.log('Data inserted successfully');
             }
        
 
