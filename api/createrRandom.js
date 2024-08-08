@@ -30,8 +30,7 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
 
 
     try {
-
-        const periodTimeMap = { 'Daily': 30, 'Weekly': 4, 'Monthly': 6, 'Quarterly': 4, 'Annually': 2 };
+        const periodTimeMap = { 'Daily': 1, 'Weekly': 4, 'Monthly': 6, 'Quarterly': 4, 'Annually': 2 };
         const periodTime = periodTimeMap[period] || 0;
 
         let rows = [];
@@ -58,10 +57,6 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
                         row.push(formattedDate);
                     }
                     else if (headers[j].value === 'guid') {
-                      /*  row.push('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                            let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                            return v.toString(16);
-                        }));*/
                         row.push(uuidv4()); 
                     }
                     else if (headers[j].type === 'number') {
@@ -78,6 +73,9 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
                         }
                     }
                     else if (headers[j].type === 'date') {
+                       /* let date = new Date();
+                        date = addTimeToDate(date, period, k);
+                        row.push(date.toISOString().split('T')[0]);*/
                         let parts = ranges[j][0].split('/'); // Split the date string
                         let parsedDate = new Date(parts[2], parts[1] - 1, parts[0]); // Months are 0-indexed
                         let newDate = addTimeToDate(parsedDate, period, k).toISOString().split('T')[0];
