@@ -30,7 +30,7 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
 
 
     try {
-        const periodTimeMap = { 'Daily': 1, 'Weekly': 4, 'Monthly': 6, 'Quarterly': 4, 'Annually': 2 };
+        const periodTimeMap = { 'Daily': 30, 'Weekly': 4, 'Monthly': 6, 'Quarterly': 4, 'Annually': 2 };
         const periodTime = periodTimeMap[period] || 0;
 
         let rows = [];
@@ -86,6 +86,9 @@ async function createrRandom(numbersOfRecords, headers, period, check) {
                     }
                     else if (headers[j].type === 'boolean') {
                         row.push(randomInt(0, 1));
+                    }
+                    else if (headers[j].type === 'none') {
+                        row.push('');
                     }
 
 
